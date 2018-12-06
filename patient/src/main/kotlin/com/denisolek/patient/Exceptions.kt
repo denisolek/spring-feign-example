@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
 class PatientNotFound : ServiceException(HttpStatus.NOT_FOUND, "Patient not found")
+class PatientAlreadyExists : ServiceException(HttpStatus.CONFLICT, "Patient already exists")
 
 data class ResponseTemplate(var code: String, var message: String)
 

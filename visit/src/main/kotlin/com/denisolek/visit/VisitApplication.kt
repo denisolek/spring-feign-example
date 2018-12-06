@@ -11,7 +11,7 @@ import java.time.LocalTime
 import javax.annotation.PostConstruct
 
 @SpringBootApplication
-@EnableFeignClients(basePackages = ["com.denisolek"])
+@EnableFeignClients(basePackages = ["com.denisolek.visit.client"])
 class VisitApplication
 
 fun main(args: Array<String>) {
@@ -29,6 +29,7 @@ class Init {
         visitService?.add(Visit(date = ldt(12, 0), doctorId = 1, patientId = 2))
         visitService?.add(Visit(date = ldt(14, 0), doctorId = 1, patientId = 3))
         visitService?.add(Visit(date = ldt(13, 0), doctorId = 2, patientId = 4))
+        visitService?.add(Visit(date = ldt(13, 0), doctorId = 2, patientId = 999))
     }
 
     fun ldt(hour: Int, minute: Int) = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.of(hour, minute))

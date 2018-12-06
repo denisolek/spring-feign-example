@@ -2,6 +2,7 @@ package com.denisolek.visit
 
 import com.denisolek.visit.client.DoctorClient
 import com.denisolek.visit.client.PatientClient
+import feign.FeignException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
@@ -54,6 +55,9 @@ class VisitService(
     var maxId: Int = 0
 
     fun add(visit: Visit) {
+        // check if doctor exists - in real example it should be just endpoint returning true/false, not entire doctor
+        if (doctorClient.get(visit.doctorId))
+
         ++maxId
         visit.id = maxId
         map[maxId] = visit
@@ -69,18 +73,35 @@ class VisitService(
 
     fun getAllDetails(): List<VisitDetailsDTO> {
         val visits = ArrayList(map.values)
-//        val doctorIds = visits.map { it.doctorId }
+        val doctorIds = visits.map { it.doctorId }
         val patientIds = visits.map { it.patientId }
 
-        val patients = patientClient.getMany(patientIds.map { it.toString() })
+        val patients = patientClient.getMany(patientIds.map { it.toString() }).map { Pair(it.id, it) }.toMap()
+        val doctors = doctorClient.getMany(doctorIds.map { it.toString() }).map { Pair(it.id, it) }.toMap()
 
-        return listOf()
+        return visits.map {
+            VisitDetailsDTO(
+                id = it.id!!,
+                date = it.date,
+                doctorDTO = doctors[it.doctorId]!!,
+                patientDTO = patients[it.patientId]!!
+            )
+        }
     }
 
     fun getDetails(id: Int): VisitDetailsDTO {
         val visit = map[id] ?: throw VisitNotFound()
-        val patientDTO = patientClient.get(visit.patientId)
-        val doctorDTO = doctorClient.get(visit.doctorId)
+        val patientDTO = try {
+            patientClient.get(visit.patientId)
+        } catch (ex: FeignException) {
+            throw ServiceException(HttpStatus.resolve(ex.status())!!, "")
+        }
+
+        val doctorDTO = try {
+            doctorClient.get(visit.doctorId)
+        } catch (ex: FeignException) {
+            throw ServiceException(HttpStatus.resolve(ex.status())!!, "")
+        }
 
         return VisitDetailsDTO(
             id = visit.id!!,

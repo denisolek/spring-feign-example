@@ -20,11 +20,11 @@ class Init {
 
     @PostConstruct
     fun init() {
-        patientService?.add(Patient(name = "Pacjent Tomasz"))
-        patientService?.add(Patient(name = "Pacjent Irek"))
-        patientService?.add(Patient(name = "Pacjent Sara"))
-        patientService?.add(Patient(name = "Pacjent Dominika"))
-        patientService?.add(Patient(name = "Pacjent Magda"))
-        patientService?.add(Patient(name = "Pacjent Monika"))
+        patientService?.add(Patient(name = "Pacjent Tomasz", email = "tomasz@gmail.com"))
+        patientService?.add(Patient(name = "Pacjent Irek", email = "irek@gmail.com"))
+        patientService?.add(Patient(name = "Pacjent Sara", email = "sara@gmail.com"))
+        patientService?.add(Patient(name = "Pacjent Dominika", email = "dominika@gmail.com"))
+        patientService?.add(Patient(name = "Pacjent Magda", email = "magda@gmail.com"))
+        patientService?.add(Patient(name = "Pacjent Monika", email = "monika@gmail.com"))
     }
 }

@@ -3,7 +3,6 @@ package com.denisolek.doctor
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 class Doctor(
     var id: Int? = null,
@@ -20,7 +19,7 @@ class DoctorController(val doctorService: DoctorService) {
     @GetMapping("/doctors")
     fun getDoctors(
         @RequestParam(required = false, defaultValue = "") id: List<String>
-    ): List<Doctor> = doctorService.getAll()
+    ): List<Doctor> = doctorService.getMany(id)
 
     @GetMapping("/doctors/{id}")
     fun getDoctor(@PathVariable id: Int): Doctor = doctorService.get(id)
@@ -37,8 +36,9 @@ class DoctorService {
         map[maxId] = doctor
     }
 
-    fun getAll(): List<Doctor> {
-        return ArrayList(map.values)
+    fun getMany(ids: List<String>): List<Doctor> {
+        val doctorIds = ids.map { it.toInt() }
+        return map.values.filter { doctorIds.contains(it.id) }
     }
 
     fun get(id: Int): Doctor {

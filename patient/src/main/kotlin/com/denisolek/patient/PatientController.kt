@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.*
 
 class Patient(
     var id: Int? = null,
-    val name: String
+    val name: String,
+    val email: String
 )
 
 @RestController
@@ -31,14 +32,16 @@ class PatientService {
     var maxId: Int = 0
 
     fun add(patient: Patient) {
+        if (map.values.find { it.email == patient.email } != null)
+            throw PatientAlreadyExists()
         ++maxId
         patient.id = maxId
         map[maxId] = patient
     }
 
     fun getMany(ids: List<String>): List<Patient> {
-        val patients = ids.map { it.toInt() }
-        return map.values.filter { patients.contains(it.id) }
+        val patientIds = ids.map { it.toInt() }
+        return map.values.filter { patientIds.contains(it.id) }
     }
 
     fun get(id: Int): Patient {
